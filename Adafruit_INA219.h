@@ -196,3 +196,4 @@ private:
 };
 
 #endif
+void setCalibration_16V_100mA();  // 👈 Add this line near the other calibration functions
