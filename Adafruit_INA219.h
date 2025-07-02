@@ -1,3 +1,4 @@
+void setCalibration_16V_100mA();
 /*!
  * @file Adafruit_INA219.h
  *
