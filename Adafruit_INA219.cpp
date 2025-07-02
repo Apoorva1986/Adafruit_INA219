@@ -1,3 +1,11 @@
+void Adafruit_INA219::setCalibration_16V_100mA() {
+  // Custom calibration for 0–100 mA range with 0.1 ohm shunt
+  ina219_calValue = 40960;              // Higher resolution for lower currents
+  ina219_currentDivider_mA = 25;        // 1 bit = 0.04 mA
+  ina219_powerMultiplier_mW = 0.8;      // From datasheet formula
+
+  wireWriteRegister(INA219_REG_CALIBRATION, ina219_calValue);
+}
 /*!
  * @file Adafruit_INA219.cpp
  *
