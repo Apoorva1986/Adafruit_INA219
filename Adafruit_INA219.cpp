@@ -484,3 +484,4 @@ void Adafruit_INA219::setCalibration_16V_400mA() {
  *          result is stored.
  */
 bool Adafruit_INA219::success() { return _success; }
+void Adafruit_INA219::setCalibration_16V_100mA() {
