@@ -484,3 +484,10 @@ void Adafruit_INA219::setCalibration_16V_400mA() {
  *          result is stored.
  */
 bool Adafruit_INA219::success() { return _success; }
+void Adafruit_INA219::setCalibration_16V_100mA() {
+  ina219_calValue = 10240;
+  ina219_currentDivider_mA = 25.0;
+  ina219_powerDivider_mW = 1.0;
+
+  wireWriteRegister(INA219_REG_CALIBRATION, ina219_calValue);
+}
