@@ -389,6 +389,26 @@ void Adafruit_INA219::setCalibration_32V_1A() {
  *     only supporting 16V at 400mA max.
  */
 void Adafruit_INA219::setCalibration_16V_400mA() {
+  void Adafruit_INA219::setCalibration_16V_100mA() {
+  ina219_calValue = 10240;              // Calibration constant
+  ina219_currentDivider_mA = 25.0;      // Higher = finer resolution
+  ina219_powerDivider_mW = 1.0;
+
+  Adafruit_BusIO_Register calibration_reg =
+      Adafruit_BusIO_Register(i2c_dev, INA219_REG_CALIBRATION, 2, MSBFIRST);
+  calibration_reg.write(ina219_calValue, 2);
+
+  uint16_t config = INA219_CONFIG_BVOLTAGERANGE_16V |
+                    INA219_CONFIG_GAIN_1_40MV |
+                    INA219_CONFIG_BADCRES_12BIT |
+                    INA219_CONFIG_SADCRES_12BIT_1S_532US |
+                    INA219_CONFIG_MODE_SANDBVOLT_CONTINUOUS;
+
+  Adafruit_BusIO_Register config_reg =
+      Adafruit_BusIO_Register(i2c_dev, INA219_REG_CONFIG, 2, MSBFIRST);
+  _success = config_reg.write(config, 2);
+}
+
 
   // Calibration which uses the highest precision for
   // current measurement (0.1mA), at the expense of
