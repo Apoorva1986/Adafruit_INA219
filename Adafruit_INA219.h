@@ -196,3 +196,9 @@ private:
 };
 
 #endif
+void setCalibration_16V_100mA() {
+  ina219_calValue = ...;               // calculate based on shunt resistor & range
+  ina219_currentDivider_mA = ...;      // adjust conversion scaling
+  ina219_powerMultiplier_mW = ...;
+  // Write calibration register value & update config
+}
