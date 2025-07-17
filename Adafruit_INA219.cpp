@@ -484,3 +484,16 @@ void Adafruit_INA219::setCalibration_16V_400mA() {
  *          result is stored.
  */
 bool Adafruit_INA219::success() { return _success; }
+void Adafruit_INA219::setCalibration_16V_100mA() {
+  ina219_calValue = 4096; // Example — you'd calculate this for 100mA range
+  ina219_currentDivider_mA = 20;  // Example — divide raw current by 20 to get mA
+  ina219_powerMultiplier_mW = 0.001; // Example — depends on calibration
+  // Configure the INA219 with 16V bus range, Gain of 1, 12-bit ADC, continuous mode...
+  uint16_t config = INA219_CONFIG_BVOLTAGERANGE_16V |
+                    INA219_CONFIG_GAIN_1_40MV |
+                    INA219_CONFIG_BADCRES_12BIT |
+                    INA219_CONFIG_SADCRES_12BIT |
+                    INA219_CONFIG_MODE_SANDBVOLT_CONTINUOUS;
+  writeRegister(INA219_REG_CALIBRATION, ina219_calValue);
+  writeRegister(INA219_REG_CONFIG, config);
+}
