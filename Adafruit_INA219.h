@@ -196,3 +196,4 @@ private:
 };
 
 #endif
+void setCalibration_16V_100mA();
