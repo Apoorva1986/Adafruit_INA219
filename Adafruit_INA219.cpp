@@ -389,6 +389,13 @@ void Adafruit_INA219::setCalibration_32V_1A() {
  *     only supporting 16V at 400mA max.
  */
 void Adafruit_INA219::setCalibration_16V_400mA() {
+  // ... existing code ...
+}
+
+void Adafruit_INA219::setCalibration_16V_100mA() {
+  // ... your custom calibration code ...
+}
+
 
   // Calibration which uses the highest precision for
   // current measurement (0.1mA), at the expense of
