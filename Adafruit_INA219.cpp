@@ -484,3 +484,54 @@ void Adafruit_INA219::setCalibration_16V_400mA() {
  *          result is stored.
  */
 bool Adafruit_INA219::success() { return _success; }
+void Adafruit_INA219::setCalibration_16V_100mA() {
+
+  // Targeting 16V and 100mA max
+  // VSHUNT_MAX = 0.04          (Gain 1 => 40mV)
+  // RSHUNT = 0.1               (Ohms)
+
+  // 1. Max possible current
+  // MaxPossible_I = VSHUNT_MAX / RSHUNT = 0.4A
+
+  // 2. Max expected current
+  // MaxExpected_I = 0.1A
+
+  // 3. LSB range
+  // MinimumLSB = 0.1 / 32767 ≈ 3.05µA
+  // MaximumLSB = 0.1 / 4096 ≈ 24.4µA
+
+  // 4. Chosen LSB
+  float currentLSB = 0.00001; // 10µA per bit
+
+  // 5. Calibration value
+  ina219_calValue = (uint16_t)(0.04096 / (currentLSB * 0.1));  // 0.1 ohm shunt
+  // = 40960 ⇒ clipped to 40960 (0xA000)
+
+  // 6. Power LSB
+  // PowerLSB = 20 * currentLSB = 0.0002 (200µW per bit)
+
+  // 7. Max current before overflow
+  // Max_Current = currentLSB * 32767 ≈ 327.67mA
+  // Limit to 100mA
+
+  // 8. Max shunt voltage
+  // 0.1A * 0.1Ω = 10mV
+
+  ina219_currentDivider_mA = 100;   // 1000 / 10µA
+  ina219_powerMultiplier_mW = 0.2f; // 200µW per bit
+
+  // Set registers
+  Adafruit_BusIO_Register calibration_reg =
+      Adafruit_BusIO_Register(i2c_dev, INA219_REG_CALIBRATION, 2, MSBFIRST);
+  calibration_reg.write(ina219_calValue, 2);
+
+  uint16_t config = INA219_CONFIG_BVOLTAGERANGE_16V |
+                    INA219_CONFIG_GAIN_1_40MV |
+                    INA219_CONFIG_BADCRES_12BIT |
+                    INA219_CONFIG_SADCRES_12BIT_1S_532US |
+                    INA219_CONFIG_MODE_SANDBVOLT_CONTINUOUS;
+
+  Adafruit_BusIO_Register config_reg =
+      Adafruit_BusIO_Register(i2c_dev, INA219_REG_CONFIG, 2, MSBFIRST);
+  _success = config_reg.write(config, 2);
+}
