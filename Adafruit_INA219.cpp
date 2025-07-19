@@ -484,3 +484,31 @@ void Adafruit_INA219::setCalibration_16V_400mA() {
  *          result is stored.
  */
 bool Adafruit_INA219::success() { return _success; }
+void Adafruit_INA219::setCalibration_16V_100mA() {
+  // 1. Max possible current
+  float maxPossible_I = 0.04 / 0.1; // = 0.4 A
+
+  // 2. Max expected current
+  float maxExpected_I = 0.1; // 100 mA
+
+  // 3. Choose Current LSB
+  float currentLSB = 0.000025; // 25 µA per bit
+
+  // 4. Compute calibration register
+  ina219_calValue = (uint16_t)(0.04096 / (currentLSB * 0.1)); // = 16384
+
+  // 5. Set multipliers
+  ina219_currentDivider_mA = 1000 / (currentLSB * 1000); // = 40
+  ina219_powerMultiplier_mW = 20 * currentLSB * 1000;    // = 0.5
+
+  // 6. Write calibration register
+  wireWriteRegister(INA219_REG_CALIBRATION, ina219_calValue);
+
+  // 7. Set config register
+  uint16_t config = INA219_CONFIG_BVOLTAGERANGE_16V |
+                    INA219_CONFIG_GAIN_1_40MV |
+                    INA219_CONFIG_BADCRES_12BIT |
+                    INA219_CONFIG_SADCRES_12BIT_1S_532US |
+                    INA219_CONFIG_MODE_SANDBVOLT_CONTINUOUS;
+  wireWriteRegister(INA219_REG_CONFIG, config);
+}
